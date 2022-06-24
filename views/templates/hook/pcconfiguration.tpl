@@ -154,6 +154,23 @@
               content += '<option value="' + cats[key]['products'][key2]['id_product'] +'" class="' + addToPack + ' cat_' + cats[key]['id_category'] + '" data-netto="' + cats[key]['products'][key2]['netto'] + '" id="cat_' + cats[key]['id_category'] + '_prod_' + cats[key]['products'][key2]['id_product'] + '" data-quantity="' + cats[key]['products'][key2]['quantity'] + '" data-attribute="' + cats[key]['products'][key2]['id_attribute'] + '" data-price="' + cats[key]['products'][key2]['price'] + '"> ' + cats[key]['products'][key2]['name'] + '</option>'
             });
             content += '</select>'
+
+            /////HARDCODE/////
+            if (cats[key]['id_category'] == 5) {
+              content += '<div id="pianka" >'
+              content += '<div class="product-variants-item">' + '<p class="control-label h6 mb-2">' + 'Tkanina ' + '   <a class="question-mark" href="#" id="span_tkanina" onmouseover="handleMouseOver(`span_tkanina`)" data-content="Dostępne po wybraniu pianki samoklejącej jako tył ramy" rel="popover" data-placement="right" data-trigger="hover">?</a></p>' + '</div>';
+              fabric.map((item) => {
+                  content += '<img id="cat_9_prod_' + item['id_product'] +'" data-quantity="' + item['quantity'] + '" data-attribute="' + item['id_attribute'] + '" onClick="handleChangeFabric(' + item['id_product'] + ')" data-price="' + item['price'] + '" src="' + item['image'] + '" class="cat_9 fabric-image disabled-image"/>'
+              })
+              content += '</div>'
+              content += '<div class="custom-control custom-switch">'
+              content += '<input type="checkbox" class="custom-control-input" id="fabricSwitch" disabled onChange="handleChangeFabricSwitch(event)">'
+              content +=  '<label class="custom-control-label" for="fabricSwitch">Dodaj usługę nakładania tkaniny</label>'
+              content += '</div>'
+              content += '<div class="service" id="cat_12_prod_' + serviceFabric['id'] + '" data-price="' + serviceFabric['price'] + '"></div>'
+
+            }
+            /////ENDHARDCODE/////
           } else if (cats[key]['type'] == 2) {      
             content += '<div class="product-variants-item">' + '<p class="control-label h6 mb-2">' + cats[key]['name'] + '   <a class="question-mark" href="#" id="span_' + cats[key]['id_category'] + '" onmouseover="handleMouseOver(`span_' + cats[key]['id_category'] + '`)" data-content="' + cats[key]['description'] + '" rel="popover" data-placement="right" data-trigger="hover">?</a></p>' + '</div>';
             Object.keys(cats[key]['products']).map(function(key2, index) {
@@ -175,6 +192,16 @@
                 content += '<img src="' + cats[key]['products'][key2]['image_big'] + '" data-netto="' + cats[key]['products'][key2]['netto'] + '" class="big_list_type ' + addToPack + ' cat_' + cats[key]['id_category'] + '" id="cat_' + cats[key]['id_category'] + '_prod_' + cats[key]['products'][key2]['id_product'] + '" onClick="handleChangeListType(' + cats[key]['products'][key2]['id_product'] + ', ' + cats[key]['id_category'] + ')" data-quantity="' + cats[key]['products'][key2]['quantity'] + '" data-attribute="' + cats[key]['products'][key2]['id_attribute'] + '" data-price="' + cats[key]['products'][key2]['price'] + '"/>'
             });
           }
+
+          /////HARDCODE/////
+          if (cats[key]['id_category'] == 6) {
+              content += '<div class="custom-control custom-switch">'
+              content += '<input type="checkbox" onChange="handleChangePaintingSwitch(event)" class="custom-control-input" id="paintingSwitch" disabled>'
+              content += '<label class="custom-control-label" for="paintingSwitch">Dodaj usługę malowania ramy</label>'
+              content += '</div>'
+              content += '<div class="service" id="cat_12_prod_' + servicePainting['id'] + '" data-price="' + servicePainting['price'] + '"></div>'
+          }
+          /////ENDHARDCODE/////
         }
     });
             
@@ -193,6 +220,45 @@
 
   function handleMouseOver(id) {
     $('#' + id).popover();  
+  }
+
+  ////HARDCODE////
+  function handleChangeFabricSwitch(event) {
+   
+      let product = $('#cat_12_prod_100')
+      if (product.hasClass('selectedOption')) {
+          product.removeClass('selectedOption');
+      } else {
+          product.addClass('selectedOption');
+      }
+
+      calculatePrice()
+  }
+
+  function handleChangePaintingSwitch(event) {
+    let product = $('#cat_12_prod_99')
+     if (product.hasClass('selectedOption')) {
+        product.removeClass('selectedOption');
+     } else {
+        product.addClass('selectedOption');
+     }
+
+    calculatePrice()
+  }
+    ////ENDHARDCODE////
+
+  function handleChangeFabric(idProd) {
+    if (!$('#cat_9_prod_' + idProd).hasClass('disabled-image')) {
+      $('#fabricSwitch').prop('disabled', false);
+
+      if ($('#cat_9_prod_' + idProd).hasClass('selectedOption')) {
+        $('.fabric-image').removeClass('selectedOption');
+      } else {
+        $('.fabric-image').removeClass('selectedOption');
+        $('#cat_9_prod_' + idProd).addClass('selectedOption');
+      }
+    }
+    calculatePrice()
   }
 
     function handleChangeListType(idProd, idCat) {
@@ -234,6 +300,21 @@
 
   function handleChangeProd(event, idCat) {
     let idProd = event.target.value
+    //////HARDCODE/////
+    if (idCat == 5 && idProd != 59 && idProd != 138) {
+      $('#fabricSwitch').prop('disabled', true);
+      $('#fabricSwitch').prop( "checked", false );
+      $('.fabric-image').addClass('disabled-image');
+      $('.fabric-image').removeClass('selectedOption');
+      $('#cat_12_prod_100').removeClass('selectedOption');
+    } else if ( idProd == 59 || idProd == 138) {
+      $('#fabricSwitch').prop('disabled', true);
+      $('#fabricSwitch').prop( "checked", false );
+      $('.fabric-image').removeClass('disabled-image');
+      $('.fabric-image').removeClass('selectedOption');
+      $('#cat_12_prod_100').removeClass('selectedOption');
+    }
+    /////ENDHARDCODE/////
 
     let id = event.target.id
     if ($( '#cat_' + idCat + '_prod_' + idProd ).hasClass( "selectedOption")) {
