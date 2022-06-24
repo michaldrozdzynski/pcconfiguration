@@ -1,0 +1,1 @@
+<a href="{Context::getContext()->link->getAdminLink('AdminModules', true, [], ['configure' => 'pcconfiguration'])}" class="btn btn-default"><i class="process-icon-back"></i> Powrót do listy</a>
